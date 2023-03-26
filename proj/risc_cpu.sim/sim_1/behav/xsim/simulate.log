@@ -1,0 +1,4 @@
+Time resolution is 1 ps
+imem loaded successfully!
+imem loaded successfully!
+$finish called at time : 5220 ns : File "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/test/top_tb.sv" Line 30

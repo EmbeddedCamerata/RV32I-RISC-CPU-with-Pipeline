@@ -1,0 +1,24 @@
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/core/alu.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module alu
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/core/aludec.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module aludec
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/core/controller.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module controller
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/core/core_top.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module core_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/core/datapath.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module datapath
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/dmem.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dmem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/core/extend.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module extend
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/imem.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module imem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/core/maindec.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module maindec
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/core/regfile.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module regfile
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/rtl/top.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/kafcoppelia/WORK/BOARDS/Genesys2/Very-Simple-RISC-CPU-on-Gen2/test/top_tb.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module top_tb
