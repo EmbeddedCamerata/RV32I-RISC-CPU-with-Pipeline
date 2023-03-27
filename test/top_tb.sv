@@ -1,31 +1,32 @@
 `include "config.vh"
-
-`ifndef SIMULATION
-`define SIMULATION
-`endif /* SIMULATION */
-
 `define PERIOD 100
 
 module top_tb;
-	logic clk;
-    logic reset;
+	logic       clk;
+    logic       reset;
     logic [7:0] led;
 	
 	top u_top(.*);
 
-`ifdef SIM_ON_IVERILOG
 	initial begin
+`ifdef SIM_VALUE25
         $dumpfile("./test/value25_sim_wave.fst");
+`endif
+`ifdef SIM_ROTATING_LEDS
+		$dumpfile("./test/rotating_leds_sim_wave.fst");
+`endif
+`ifdef SIM_DB_ROTATING_LEDS
+		$dumpfile("./test/db_rotating_leds_sim_wave.fst");
+`endif
         $dumpvars(0, u_top);
     end
-`endif
 
 	initial begin
         clk = 0;
         // display time in nanoseconds
         $timeformat(-9, 1, " ns", 12);
         sys_reset;
-        value25_simulation;
+        test;
         #5000;
         $finish;
     end
@@ -38,16 +39,34 @@ module top_tb;
         end
     endtask
 
-    task value25_simulation;
+    task test;
         begin
-`ifdef SIM_ON_IVERILOG
-            $readmemh("./test/value25_sim_imem.txt", u_top.imem.RAM, 0, 20);
-`else
-            $readmemh("./value25_sim_imem.txt", u_top.imem.RAM, 0, 20);
+`ifdef SIM_VALUE25
+            $readmemh("./test/value25_sim_imem.txt", u_top.imem.RAM);
+`endif
+`ifdef SIM_ROTATING_LEDS
+			$readmemh("./test/rotating_leds_sim_imem.txt", u_top.imem.RAM);
+`endif
+`ifdef SIM_DB_ROTATING_LEDS
+			$readmemh("./test/db_rotating_leds_sim_imem.txt", u_top.imem.RAM);
 `endif
             $display("imem loaded successfully!");
         end
     endtask
+
+`ifdef SIM_VALUE25
+    always @(posedge clk) begin
+        if (u_top.PC == 'h4c) begin
+            // When PC == 76, the next data & address to write should be 25 & 100
+            if (u_top.DataAdr == 100 && u_top.WriteData == 25)
+                $display("Simulation OK: DataAdr=0x%02x, WriteData=0x%02x",
+                    u_top.DataAdr, u_top.WriteData);
+            else
+                $display("Simlulation failed: DataAdr=0x%02x, WriteData=0x%02x",
+                    u_top.DataAdr, u_top.WriteData);
+        end
+    end
+`endif
 
 	always #(`PERIOD/2) clk = ~clk;
 

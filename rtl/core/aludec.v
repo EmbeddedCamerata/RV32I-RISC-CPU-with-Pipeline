@@ -51,33 +51,35 @@
 //   Instr[11:7]  = rd
 //   Instr[6:0]   = opcode
 
-//   Instruction  opcode    funct3    funct7
-//   add          0110011   000       0000000
-//   sub          0110011   000       0100000
-//   and          0110011   111       0000000
-//   or           0110011   110       0000000
-//   slt          0110011   010       0000000
-//   addi         0010011   000       immediate
-//   andi         0010011   111       immediate
-//   ori          0010011   110       immediate
-//   slti         0010011   010       immediate
-//   beq          1100011   000       immediate
-//   lw	          0000011   010       immediate
-//   sw           0100011   010       immediate
-//   jal          1101111   immediate immediate
+/*
+	Instruction  opcode    funct3    funct7
+	add          0110011   000       0000000
+	sub          0110011   000       0100000
+	and          0110011   111       0000000
+	or           0110011   110       0000000
+	slt          0110011   010       0000000
+	addi         0010011   000       immediate
+	andi         0010011   111       immediate
+	ori          0010011   110       immediate
+	slti         0010011   010       immediate
+	beq          1100011   000       immediate
+	lw	          0000011   010       immediate
+	sw           0100011   010       immediate
+	jal          1101111   immediate immediate
+*/
 
 module aludec(
-	input  logic       opb5,
-    input  logic [2:0] funct3,
-    input  logic       funct7b5,
-    input  logic [1:0] ALUOp,
-    output logic [2:0] ALUControl
+	input				opb5,
+    input		[2:0]	funct3,
+    input				funct7b5,
+    input		[1:0]	ALUOp,
+    output reg	[2:0]	ALUControl
 );
 
-	logic RtypeSub;
+	wire RtypeSub;
 	assign RtypeSub = funct7b5 & opb5;  // TRUE for R-type subtract instruction
 
-	always_comb begin
+	always @(*) begin
 		case (ALUOp)
 			2'b00: ALUControl = 3'b0;
 			2'b01: ALUControl = 3'b1;

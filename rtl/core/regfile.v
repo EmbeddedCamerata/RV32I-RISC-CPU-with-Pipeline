@@ -1,26 +1,26 @@
 module regfile(
-	input  bit        	clk,
-    input  logic        we3,
-    input  logic [ 4:0] a1,	// rs1
-	input  logic [ 4:0] a2,	// rs2
-	input  logic [ 4:0] a3, // rd
-    input  logic [31:0] wd3,
-    output logic [31:0] rd1,
-	output logic [31:0] rd2,
-    output logic [31:0] sim_t3,
-    output logic [31:0] sim_t4,
-    output logic [31:0] sim_t5,
-    output logic [31:0] sim_t6
+	input				clk,
+    input				we3,
+    input		[ 4:0]	a1,	// rs1
+	input		[ 4:0]	a2,	// rs2
+	input		[ 4:0]	a3, // rd
+    input		[31:0]	wd3,
+    output wire [31:0]	rd1,
+	output wire [31:0]	rd2,
+    output wire [31:0]	sim_t3,
+    output wire [31:0]	sim_t4,
+    output wire [31:0]	sim_t5,
+    output wire [31:0]	sim_t6
 );
 
-  	logic [31:0] rf[31:0];
+  	reg [31:0] rf[31:0];
 
   	// Three ported register file
   	// Read two ports combinationally (A1/RD1, A2/RD2)
   	// Write third port on rising edge of clock (A3/WD3/WE3)
   	// Register #0 is hard-wired connected to GND
 
-  	always_ff @(posedge clk) begin
+  	always @(posedge clk) begin
   		if (we3)
 	  		rf[a3] <= wd3;
 	end

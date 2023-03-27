@@ -1,23 +1,23 @@
 `include "config.vh"
 
 module top(
-`ifndef SIM_ON_IVERILOG 
-    input  bit          clk_in1_n,
-    input  bit          clk_in1_p,
+`ifndef SIM_ON_IVERILOG
+    input				clk_in1_n,
+    input				clk_in1_p,
 `else
-    input  bit          clk,
+    input				clk,
 `endif
-    input  bit          reset,
-    output logic [7:0]  led
+    input				reset,
+    output wire [7:0]	led
 );
 
 `ifndef SIM_ON_IVERILOG
-    bit clk;
+    wire clk;
 `endif
     
-    logic MemWrite;
-    logic [31:0] PC, Instr, ReadData, WriteData, DataAdr;
-    logic [31:0] sim_t3, sim_t4, sim_t5, sim_t6;
+    wire MemWrite;
+    wire [31:0] PC, Instr, ReadData, WriteData, DataAdr;
+    wire [31:0] sim_t3, sim_t4, sim_t5, sim_t6;
     
     // instantiate processor and memories
     core_top rvsingle(
@@ -48,7 +48,7 @@ module top(
         .rd (ReadData   )
     );
 
-`ifndef SIMULATION
+`ifndef SIM_ON_IVERILOG
     clk_wiz_0 u_clk_wiz(
         // Clock out ports
         .clk_out1(clk),         // output clk_out1

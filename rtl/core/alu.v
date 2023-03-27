@@ -1,8 +1,8 @@
 module alu(
-	input  logic [31:0] a, b,
-    input  logic [2:0]  alucontrol,
-    output logic [31:0] result,
-    output logic        zero
+	input		[31:0]	a, b,
+    input		[ 2:0]	alucontrol,
+    output reg	[31:0]	result,
+    output wire			zero
 );
 
 	wire [31:0] subtract = a - b;

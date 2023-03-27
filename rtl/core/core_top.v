@@ -1,21 +1,21 @@
 module core_top(    
-	input  bit        	clk,
-    input  bit        	reset,
-    output logic [31:0] PC,
-    input  logic [31:0] Instr,
-    output logic        MemWrite,
-    output logic [31:0] ALUResult, // Mem addr;
-    output logic [31:0] WriteData,  
-    input  logic [31:0] ReadData,
-    output logic [31:0] sim_t3,
-    output logic [31:0] sim_t4,
-    output logic [31:0] sim_t5,
-    output logic [31:0] sim_t6
+	input				clk,
+    input				reset,
+	input		[31:0]	Instr,
+    output wire [31:0]	PC,
+    output wire			MemWrite,
+    output wire [31:0]	ALUResult,
+    output wire [31:0]	WriteData,
+    input  wire [31:0]	ReadData,
+    output wire [31:0]	sim_t3,
+    output wire [31:0]	sim_t4,
+    output wire [31:0]	sim_t5,
+    output wire [31:0]	sim_t6
 );
 
-  	logic       PCSrc, ALUSrc, RegWrite, Jump, Zero;
-  	logic [1:0] ResultSrc, ImmSrc;
-  	logic [2:0] ALUControl;
+  	wire PCSrc, ALUSrc, RegWrite, Jump, Zero;
+  	wire [1:0] ResultSrc, ImmSrc;
+  	wire [2:0] ALUControl;
 
   	controller c(
 		.op        (Instr[6:0]  ),
@@ -24,16 +24,16 @@ module core_top(
   	    .Zero      (Zero        ),
   	    .ResultSrc (ResultSrc   ),
   	    .MemWrite  (MemWrite    ),
-  	    .PCSrc     (PCSrc       ), 
+  	    .PCSrc     (PCSrc       ),
   	    .ALUSrc    (ALUSrc      ),
-  	    .RegWrite  (RegWrite    ), 
+  	    .RegWrite  (RegWrite    ),
   	    .Jump      (Jump        ),
   	    .ImmSrc    (ImmSrc      ),
   	    .ALUControl(ALUControl  )
 	);
 
   	datapath dp(
-		.clk       (clk         ), 
+		.clk       (clk         ),
     	.reset     (reset       ),
     	.ResultSrc (ResultSrc   ), 
     	.PCSrc     (PCSrc       ), 
@@ -41,10 +41,10 @@ module core_top(
     	.RegWrite  (RegWrite    ),
     	.ImmSrc    (ImmSrc      ),
     	.ALUControl(ALUControl  ),
-    	.Zero      (Zero        ),  // output alu zero to control unit.
+    	.Zero      (Zero        ),
     	.PC        (PC          ),
     	.Instr     (Instr       ),
-    	.ALUResult (ALUResult   ),  // Mem addr;
+    	.ALUResult (ALUResult   ),
     	.WriteData (WriteData   ),
     	.ReadData  (ReadData    ),
     	.sim_t3    (sim_t3      ),
