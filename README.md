@@ -11,7 +11,7 @@
 ## 📜 Directory
 
 1. `./rtl` 下为RTL源码
-2. `./test` 下为仿真测试所需文件，其中 `.txt` 为三个仿真程序给 `imem` 输入的指令；`./test/test.sh` 包含使用iverilog仿真的简单命令
+2. `./test` 下为仿真测试所需文件，其中 `.mem` 为三个仿真程序放置在 `imem` 的指令；`./test/test.sh` 包含使用iverilog仿真的简单命令
 3. 三个应用示例及仿真程序在 `./rtl/imem.v` 内注释处有详细说明
 4. Vivado工程位于 `./proj` 下，需要Vivado 2022.2及更高版本，或自行部署
 
@@ -100,7 +100,7 @@
 2. 单向流水灯。板上时钟频率100MHz，借助 `t5` 寄存器及循环计数，达到
 
    $$
-   100\text{M}/(2047*8192*3)\approx 2\text{Hz}
+   100\text{M}/(2047\times 8192\times 3)\approx 2\text{Hz}
    $$
 
    分频，实现间隔~0.5秒闪烁效果。在Genesys2上，`t4` 寄存器低八位对应8个LED。

@@ -160,63 +160,65 @@ module imem(
 */
 
 `ifndef SIM_ON_IVERILOG
+	always @(*) begin
 `ifdef USE_ROTATING_LEDS_EXAMPLE
-	assign RAM[0]  = 32'h7FF00F13;
-	assign RAM[1]  = 32'h01EF0F33;
-	assign RAM[2]  = 32'h01EF0F33;
-	assign RAM[3]  = 32'h01EF0F33;
-	assign RAM[4]  = 32'h01EF0F33;
-	assign RAM[5]  = 32'h01EF0F33;
-	assign RAM[6]  = 32'h01EF0F33;
-	assign RAM[7]  = 32'h01EF0F33;
-	assign RAM[8]  = 32'h01EF0F33;
-	assign RAM[9]  = 32'h01EF0F33;
-	assign RAM[10] = 32'h01EF0F33;
-	assign RAM[11] = 32'h01EF0F33;
-	assign RAM[12] = 32'h01EF0F33;
-	assign RAM[13] = 32'h01EF0F33;
-	assign RAM[14] = 32'h10000f93;
-	assign RAM[15] = 32'h00100e93;
-	assign RAM[16] = 32'h00000e13;
-	assign RAM[17] = 32'h001E0E13;
-	assign RAM[18] = 32'h01EE0463;
-	assign RAM[19] = 32'hFF9FF06F;
-	assign RAM[20] = 32'h01DE8EB3;
-	assign RAM[21] = 32'hFFFE84E3;
-	assign RAM[22] = 32'hFE9FF06F;
+		RAM[0]  = 32'h7FF00F13;
+		RAM[1]  = 32'h01EF0F33;
+		RAM[2]  = 32'h01EF0F33;
+		RAM[3]  = 32'h01EF0F33;
+		RAM[4]  = 32'h01EF0F33;
+		RAM[5]  = 32'h01EF0F33;
+		RAM[6]  = 32'h01EF0F33;
+		RAM[7]  = 32'h01EF0F33;
+		RAM[8]  = 32'h01EF0F33;
+		RAM[9]  = 32'h01EF0F33;
+		RAM[10] = 32'h01EF0F33;
+		RAM[11] = 32'h01EF0F33;
+		RAM[12] = 32'h01EF0F33;
+		RAM[13] = 32'h01EF0F33;
+		RAM[14] = 32'h10000f93;
+		RAM[15] = 32'h00100e93;
+		RAM[16] = 32'h00000e13;
+		RAM[17] = 32'h001E0E13;
+		RAM[18] = 32'h01EE0463;
+		RAM[19] = 32'hFF9FF06F;
+		RAM[20] = 32'h01DE8EB3;
+		RAM[21] = 32'hFFFE84E3;
+		RAM[22] = 32'hFE9FF06F;
 `else
-	assign RAM[0]  = 32'h7FF00F13;
-	assign RAM[1]  = 32'h00D00E13;
-	assign RAM[2]  = 32'h00000293;
-	assign RAM[3]  = 32'h00128293;
-	assign RAM[4]  = 32'h01EF0F33;
-	assign RAM[5]  = 32'h005E0463;
-	assign RAM[6]  = 32'hFF5FF06F;
-	assign RAM[7]  = 32'h00800F93;
-	assign RAM[8]  = 32'h00000113;
-	assign RAM[9]  = 32'h00000213;
-	assign RAM[10] = 32'h00000E93;
-	assign RAM[11] = 32'h00000E13;
-	assign RAM[12] = 32'h001E0E13;
-	assign RAM[13] = 32'h01EE0463;
-	assign RAM[14] = 32'hFF9FF06F;
-	assign RAM[15] = 32'h002F8463;
-	assign RAM[16] = 32'h00400A63;
-	assign RAM[17] = 32'h00100213;
-	assign RAM[18] = 32'h00220663;
-	assign RAM[19] = 32'h40410133;
-	assign RAM[20] = 32'h00C0006F;
-	assign RAM[21] = 32'h00000213;
-	assign RAM[22] = 32'h00110113;
-	assign RAM[23] = 32'h00100293;
-	assign RAM[24] = 32'h00100193;
-	assign RAM[25] = 32'h00228863;
-	assign RAM[26] = 32'h00128293;
-	assign RAM[27] = 32'h003181B3;
-	assign RAM[28] = 32'hFF5FF06F;
-	assign RAM[29] = 32'h00018E93;
-	assign RAM[30] = 32'hFB5FF06F;
-`endif
-`endif
+		RAM[0]  = 32'h7FF00F13;
+		RAM[1]  = 32'h00D00E13;
+		RAM[2]  = 32'h00000293;
+		RAM[3]  = 32'h00128293;
+		RAM[4]  = 32'h01EF0F33;
+		RAM[5]  = 32'h005E0463;
+		RAM[6]  = 32'hFF5FF06F;
+		RAM[7]  = 32'h00800F93;
+		RAM[8]  = 32'h00000113;
+		RAM[9]  = 32'h00000213;
+		RAM[10] = 32'h00000E93;
+		RAM[11] = 32'h00000E13;
+		RAM[12] = 32'h001E0E13;
+		RAM[13] = 32'h01EE0463;
+		RAM[14] = 32'hFF9FF06F;
+		RAM[15] = 32'h002F8463;
+		RAM[16] = 32'h00400A63;
+		RAM[17] = 32'h00100213;
+		RAM[18] = 32'h00220663;
+		RAM[19] = 32'h40410133;
+		RAM[20] = 32'h00C0006F;
+		RAM[21] = 32'h00000213;
+		RAM[22] = 32'h00110113;
+		RAM[23] = 32'h00100293;
+		RAM[24] = 32'h00100193;
+		RAM[25] = 32'h00228863;
+		RAM[26] = 32'h00128293;
+		RAM[27] = 32'h003181B3;
+		RAM[28] = 32'hFF5FF06F;
+		RAM[29] = 32'h00018E93;
+		RAM[30] = 32'hFB5FF06F;
+`endif /* USE_ROTATING_LEDS_EXAMPLE */
+	end
+`endif /* SIM_ON_IVERILOG */
 
 endmodule

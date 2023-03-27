@@ -27,7 +27,11 @@ module top_tb;
         $timeformat(-9, 1, " ns", 12);
         sys_reset;
         test;
+`ifdef SIM_VALUE25
         #5000;
+`else
+        #100000;
+`endif
         $finish;
     end
 
@@ -42,13 +46,13 @@ module top_tb;
     task test;
         begin
 `ifdef SIM_VALUE25
-            $readmemh("./test/value25_sim_imem.txt", u_top.imem.RAM);
+            $readmemh("./test/value25_sim_imem.mem", u_top.imem.RAM);
 `endif
 `ifdef SIM_ROTATING_LEDS
-			$readmemh("./test/rotating_leds_sim_imem.txt", u_top.imem.RAM);
+			$readmemh("./test/rotating_leds_sim_imem.mem", u_top.imem.RAM);
 `endif
 `ifdef SIM_DB_ROTATING_LEDS
-			$readmemh("./test/db_rotating_leds_sim_imem.txt", u_top.imem.RAM);
+			$readmemh("./test/db_rotating_leds_sim_imem.mem", u_top.imem.RAM);
 `endif
             $display("imem loaded successfully!");
         end
@@ -66,7 +70,7 @@ module top_tb;
                     u_top.DataAdr, u_top.WriteData);
         end
     end
-`endif
+`endif /* SIM_VALUE25 */
 
 	always #(`PERIOD/2) clk = ~clk;
 
