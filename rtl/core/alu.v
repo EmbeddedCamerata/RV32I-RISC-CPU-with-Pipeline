@@ -1,5 +1,8 @@
+`include "config.vh"
+
 module alu(
-	input		[31:0]	a, b,
+	input		[31:0]	a,
+	input		[31:0]	b,
     input		[ 2:0]	alucontrol,
     output reg	[31:0]	result,
     output wire			zero
@@ -9,15 +12,15 @@ module alu(
 
 	always @(*) begin
 		case (alucontrol)
-			3'b000:  result = a + b;				// add
-			3'b001:  result = subtract;				// subtract
-			3'b010:  result = a & b;				// and
-			3'b011:  result = a | b;				// or
-			3'b100:  result = a ^ b;				// xor
-			3'b101:  result = {31'b0, subtract[31]};// slt
-			3'b110:  result = a << b[4:0];			// sll
-			3'b111:  result = a >> b[4:0];			// srl
-			default: result = 32'b0;
+			`ALU_CTRL_ADD:  result = a + b;					// ADD/ADDI
+			`ALU_CTRL_SUB:  result = subtract;				// SUB/SUBI
+			`ALU_CTRL_AND:  result = a & b;					// AND/ANDI
+			`ALU_CTRL_OR:	result = a | b;					// OR/ORI
+			`ALU_CTRL_XOR:	result = a ^ b;					// XOR/XORI
+			`ALU_CTRL_SLT:  result = {31'b0, subtract[31]};	// SLT/SLTI
+			`ALU_CTRL_SLL:  result = a << b[4:0];			// SLL/SLLI
+			`ALU_CTRL_SRL:  result = a >> b[4:0];			// SRL/SRLI
+			default:		result = 32'b0;
 		endcase
 	end
 

@@ -16,13 +16,13 @@ module maindec(
 
 	always @(*) begin
 		case (op)
-			`LW: 	 controls = {1'b1, 2'b00, 1'b1, 1'b0, 2'b01, 1'b0, 2'b00, 1'b0};
-			`SW: 	 controls = {1'b0, 2'b01, 1'b1, 1'b1, 2'b00, 1'b0, 2'b00, 1'b0};
-			`R_TYPE: controls = {1'b1, 2'b00, 1'b0, 1'b0, 2'b00, 1'b0, 2'b10, 1'b0};
-			`BEQ: 	 controls = {1'b0, 2'b10, 1'b0, 1'b0, 2'b00, 1'b1, 2'b01, 1'b0};
-			`I_TYPE: controls = {1'b1, 2'b00, 1'b1, 1'b0, 2'b00, 1'b0, 2'b10, 1'b0};
-			`JAL: 	 controls = {1'b1, 2'b11, 1'b0, 1'b0, 2'b10, 1'b0, 2'b00, 1'b1};
-			default: controls = 11'b0;
+			`OP_LW:		controls = {1'b1, 2'b00, 1'b1, 1'b0, 2'b01, 1'b0, 2'b00, 1'b0};
+			`OP_SW:		controls = {1'b0, 2'b01, 1'b1, 1'b1, 2'b00, 1'b0, 2'b00, 1'b0};
+			`OP_R_TYPE:	controls = {1'b1, 2'b00, 1'b0, 1'b0, 2'b00, 1'b0, 2'b10, 1'b0};
+			`OP_BEQ:	controls = {1'b0, 2'b10, 1'b0, 1'b0, 2'b00, 1'b1, 2'b01, 1'b0};
+			`OP_I_TYPE:	controls = {1'b1, 2'b00, 1'b1, 1'b0, 2'b00, 1'b0, 2'b10, 1'b0};
+			`OP_JAL:	controls = {1'b1, 2'b11, 1'b0, 1'b0, 2'b10, 1'b0, 2'b00, 1'b1};
+			default:	controls = 11'b0;
 		endcase
 	end
 

@@ -50,23 +50,7 @@
 //   Instr[31:12] = imm[20], imm[10:1], imm[11], imm[19:12]
 //   Instr[11:7]  = rd
 //   Instr[6:0]   = opcode
-
-/*
-	Instruction  opcode    funct3    funct7
-	add          0110011   000       0000000
-	sub          0110011   000       0100000
-	and          0110011   111       0000000
-	or           0110011   110       0000000
-	slt          0110011   010       0000000
-	addi         0010011   000       immediate
-	andi         0010011   111       immediate
-	ori          0010011   110       immediate
-	slti         0010011   010       immediate
-	beq          1100011   000       immediate
-	lw	          0000011   010       immediate
-	sw           0100011   010       immediate
-	jal          1101111   immediate immediate
-*/
+`include "config.vh"
 
 module aludec(
 	input				opb5,
@@ -75,21 +59,52 @@ module aludec(
     input		[1:0]	ALUOp,
     output reg	[2:0]	ALUControl
 );
+	
+	/*
+		Instruction	opcode		funct3		funct7
+		ADD			0110011		000			0000000
+		SUB			0110011		000			0100000
+		AND			0110011		111			0000000
+		XOR			0110011		101			0000000
+		OR			0110011		110			0000000
+		SLT			0110011		010			0000000
+		SLL			0110011		011			0000000
+		SRL 		0110011		100			0000000
+		ADDI		0010011		000			immediate
+		ANDI		0010011		111			immediate
+		XORI		0010011		101			immediate
+		ORI			0010011		110			immediate
+		SLTI		0010011		010			immediate
+		SLLI		0010011 	011 		immediate
+		SRLI 		0010011		100			immediate
+		BEQ			1100011		000			immediate
+		LW			0000011		010			immediate
+		SW			0100011		010			immediate
+		JAL			1101111		immediate	immediate
+	*/
 
 	wire RtypeSub;
 	assign RtypeSub = funct7b5 & opb5;  // TRUE for R-type subtract instruction
 
 	always @(*) begin
 		case (ALUOp)
-			2'b00: ALUControl = 3'b0;
-			2'b01: ALUControl = 3'b1;
+			2'b00: ALUControl = `ALU_CTRL_ADD; // ADD
+			2'b01: ALUControl = `ALU_CTRL_SUB; // SUB
 			2'b10: begin
 				case (funct3)
-					3'b0: if (RtypeSub) ALUControl = 3'b1; else ALUControl = 3'b0;
-					3'b010: ALUControl = 3'b101;
-					3'b110: ALUControl = 3'b011;
-					3'b111: ALUControl = 3'b010;
-					default: ALUControl = 3'b0;
+					3'b000: begin
+						if (RtypeSub)
+							ALUControl = `ALU_CTRL_SUB;	// SUB
+						else
+							ALUControl = `ALU_CTRL_ADD;	// ADD/ADDI
+					end
+					3'b010: ALUControl = `ALU_CTRL_SLT;	// SLT/SLTI
+					3'b011: ALUControl = `ALU_CTRL_SLL;	// SLL/SLLI
+					3'b100: ALUControl = `ALU_CTRL_SRL;	// SRL/SRLI
+					3'b101: ALUControl = `ALU_CTRL_XOR;	// XOR/XORI
+					3'b110: ALUControl = `ALU_CTRL_OR; 	// OR/ORI
+					3'b111: ALUControl = `ALU_CTRL_AND;	// AND/ANDI
+					default:ALUControl = 3'bx;			// Unknown
 				endcase
 			end
 			default: ALUControl = 3'b0;
