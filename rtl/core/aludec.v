@@ -2,7 +2,7 @@
 // User-level Instruction Set Architecture V2.2 (May 7, 2017)
 // Implements a subset of the base integer instructions:
 //    lw, sw
-//    add, sub, and, or, slt, 
+//    add, sub, and, or, slt,
 //    addi, andi, ori, slti
 //    beq
 //    jal
@@ -54,12 +54,12 @@
 
 module aludec(
 	input				opb5,
-    input		[2:0]	funct3,
-    input				funct7b5,
-    input		[1:0]	ALUOp,
-    output reg	[2:0]	ALUControl
+	input		[2:0]	funct3,
+	input				funct7b5,
+	input		[1:0]	ALUOp,
+	output reg	[2:0]	ALUControl
 );
-	
+
 	/*
 		Instruction	opcode		funct3		funct7
 		ADD			0110011		000			0000000

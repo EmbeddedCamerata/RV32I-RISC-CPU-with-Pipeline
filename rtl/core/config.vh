@@ -34,7 +34,7 @@
 // Define SIM_ON_IVERILOG to enable simulation on Iverilog
 `ifndef SIM_ON_IVERILOG
 
-//`define USE_ROTATING_LEDS_EXAMPLE 				// Uncomment it to implement rotating leds example on Vivado
+// `define USE_ROTATING_LEDS_EXAMPLE 				// Uncomment it to implement rotating leds example on Vivado
 `define USE_DOUBLE_SIDE_ROTATING_LEDS_EXAMPLE 	// Uncomment it to implement double-side rotating leds example on Vivado
 
 `ifdef USE_ROTATING_LEDS_EXAMPLE

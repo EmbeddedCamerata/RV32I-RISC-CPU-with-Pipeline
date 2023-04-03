@@ -2,14 +2,14 @@
 
 module maindec(
 	input		[6:0]	op,
-    output wire [1:0]	ResultSrc,
-    output wire			MemWrite,
-    output wire			Branch,
-    output wire			ALUSrc,
-    output wire			RegWrite,
-    output wire			Jump,
-    output wire [1:0]	ImmSrc,
-    output wire [1:0]	ALUOp
+	output wire [1:0]	ResultSrc,
+	output wire			MemWrite,
+	output wire			Branch,
+	output wire			ALUSrc,
+	output wire			RegWrite,
+	output wire			Jump,
+	output wire [1:0]	ImmSrc,
+	output wire [1:0]	ALUOp
 );
 
 	reg [10:0] controls;
@@ -26,6 +26,6 @@ module maindec(
 		endcase
 	end
 
-    assign {RegWrite, ImmSrc, ALUSrc, MemWrite, ResultSrc, Branch, ALUOp, Jump} = controls;
-	
+	assign {RegWrite, ImmSrc, ALUSrc, MemWrite, ResultSrc, Branch, ALUOp, Jump} = controls;
+
 endmodule

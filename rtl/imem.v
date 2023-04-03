@@ -2,7 +2,7 @@
 
 module imem(
 	input		[31:0]	a,
-    output wire [31:0]	rd
+	output wire [31:0]	rd
 );
 
 	reg [31:0] RAM[63:0];
@@ -12,7 +12,7 @@ module imem(
 /*
 	3. Double-side rotating leds.
 	If successful, 8 Leds will rotating back and forth all the time.
-	
+
 	Register	Address 	Meaning
 	t3 			11100 		counter of t5
 	t4 			11101 		LED result
@@ -37,10 +37,10 @@ module imem(
 				addi t4, x0, 0 			# t4 = 0 						28			0x00000E93	# 0000_0000_0000_00000_000_11101_0010011
 	clean_cnt:  addi t3, x0, 0          # clear count(t3).              2C			0x00000E13	# 0000_0000_0000_00000_000_11100_0010011
 	count_add:  addi t3, t3, 1          # count++                       30			0x001E0E13	# 0000_0000_0001_11100_000_11100_0010011
-	            beq  t3, t5, judge 		# if count==max, jump judge 	34			0x01EE0463	# 0000000_11110_11100_000_01000_1100011
-	            jal  count_add          #                               38			0xFF9FF06F	# 1111_1111_1001_1111_1111_00000_1101111
+				beq  t3, t5, judge 		# if count==max, jump judge 	34			0x01EE0463	# 0000000_11110_11100_000_01000_1100011
+				jal  count_add          #                               38			0xFF9FF06F	# 1111_1111_1001_1111_1111_00000_1101111
 	judge:		beq  x2, t6, dec_pow  	# if x2 == 8, jump dec_pow 		3C			0x002F8463	# 0000000_00010_11111_000_01000_1100011
-				beq  x4, x0, add_pow 	# if x4 == 0, jump add_pow 		40			0x00400A63	# 0000000_00100_00000_000_10100_1100011	
+				beq  x4, x0, add_pow 	# if x4 == 0, jump add_pow 		40			0x00400A63	# 0000000_00100_00000_000_10100_1100011
 	dec_pow:	addi x4, x0, 1 			# x4 = 1 						44			0x00100213	# 0000_0000_0001_00000_000_00100_0010011
 				beq  x2, x4, add_pow 	# if x2 == x4, jump add_pow 	48			0x00220663	# 0000000_00010_00100_000_01100_1100011
 				sub  x2, x2, x4 		# x2 -= 1 						4C			0x40410133	# 0100000_00100_00010_000_00010_0110011
@@ -55,7 +55,7 @@ module imem(
 				jal  led_loop 			#								70			0xFF5FF06F	# 1111_1111_0101_1111_1111_00000_1101111
 	show_led: 	addi t4, x3, 0 			# t4 = x3 						74			0x00018E93	# 0000_0000_0000_00011_000_11101_0010011
 				jal  clean_cnt  		# 								78			0xFB5FF06F	# 1111_1011_0101_1111_1111_00000_1101111
-	
+
 	For simulation, t5 = 16:
 				RISC-V Assembly         Description                     Address     Machine Code
 	init:       addi t5, x0, 1      	# count_max, t5 = 1				00			0x00100F13	# 0000_0000_0001_00000_000_11110_0010011
@@ -68,17 +68,17 @@ module imem(
 	start: 		addi t6, x0, 8        	# pow_max, t6 = 8           	1C			0x00800F93	# 0000_0000_1000_00000_000_11111_0010011
 				addi x2, x0, 0          # init pow count, x2 = 0        20			0x00000113	# 0000_0000_0000_00000_000_00010_0010011
 				addi x4, x0, 0 			# x4 = 0 						24			0x00000213	# 0000_0000_0000_00000_000_00100_0010011
-				addi t4, x0, 0 			# t4 = 0 						28			0x00000E93	# 0000_0000_0000_00000_000_11101_0010011	
+				addi t4, x0, 0 			# t4 = 0 						28			0x00000E93	# 0000_0000_0000_00000_000_11101_0010011
 	clean_cnt:  addi t3, x0, 0          # clear count(t3).              2C			0x00000E13	# 0000_0000_0000_00000_000_11100_0010011
 	count_add:  addi t3, t3, 1          # count++                       30			0x001E0E13	# 0000_0000_0001_11100_000_11100_0010011
-	            beq  t3, t5, judge 		# if t3==count_max, jump judge 	34			0x01CF0463	# 0000000_11100_11110_000_01000_1100011
-	            jal  count_add          #                               38			0xFF9FF06F	# 1111_1111_1001_1111_1111_00000_1101111
+				beq  t3, t5, judge 		# if t3==count_max, jump judge 	34			0x01CF0463	# 0000000_11100_11110_000_01000_1100011
+				jal  count_add          #                               38			0xFF9FF06F	# 1111_1111_1001_1111_1111_00000_1101111
 	judge:		beq  x2, t6, dec_pow  	# if x2 == 8, jump dec_pow 		3C			0x002F8463	# 0000000_00010_11111_000_01000_1100011
-				beq  x4, x0, add_pow 	# if x4 == 0, jump add_pow 		40			0x00400A63	# 0000000_00100_00000_000_10100_1100011	
+				beq  x4, x0, add_pow 	# if x4 == 0, jump add_pow 		40			0x00400A63	# 0000000_00100_00000_000_10100_1100011
 	dec_pow:	addi x4, x0, 1 			# x4 = 1 						44			0x00100213	# 0000_0000_0001_00000_000_00100_0010011
 				beq  x2, x4, add_pow 	# if x2 == x4, jump add_pow 	48			0x00220663	# 0000000_00010_00100_000_01100_1100011
 				sub  x2, x2, x4 		# x2 -= 1 						4C			0x40410133	# 0100000_00100_00010_000_00010_0110011
-				jal  get_led 			#								50			0x00C0006F	# 0000_0000_1100_0000_0000_00000_1101111	
+				jal  get_led 			#								50			0x00C0006F	# 0000_0000_1100_0000_0000_00000_1101111
 	add_pow:    addi x4, x0, 0 			# x4 = 0 						54			0x00000213	# 0000_0000_0000_00000_000_00100_0010011
 				addi x2, x2, 1        	# x2 += 1 		              	58			0x00110113	# 0000_0000_0001_00010_000_00010_0010011
 	get_led:	addi x5, x0, 1			# x5 = 1 						5C			0x00100293	# 0000_0000_0001_00000_000_00101_0010011
