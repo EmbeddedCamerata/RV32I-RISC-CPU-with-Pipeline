@@ -1,3 +1,5 @@
 *.vvp
 *.fst
+test/pipeline
+test/simple
 test.py
