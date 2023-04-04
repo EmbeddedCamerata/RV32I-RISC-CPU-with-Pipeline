@@ -19,11 +19,7 @@ module top_tb;
 		fst_name = {test_base_dir, "/simple/"};
 `else
 		fst_name = {test_base_dir, "/pipeline/"};
-`endif
-
-`ifdef SIM_RANDOM_INS
-		fst_name = {fst_name, "SIM_RANDOM_INS"};
-`endif /* SIM_RANDOM_INS */
+`endif /* USE_PIPELINE */
 
 `ifdef SIM_VALUE25
 		fst_name = {fst_name, "SIM_VALUE25"};
@@ -39,7 +35,6 @@ module top_tb;
 
 		fst_name = {fst_name, "_wave.fst"};
 		$display("Wave file will output in %s", fst_name);
-
 		$dumpfile(fst_name);
 		$dumpvars(0, u_top);
 	end
@@ -70,19 +65,16 @@ module top_tb;
 	task test;
 		begin
 `ifdef SIM_VALUE25
-			mem_name = "/value25_sim_imem.mem";
+			mem_name = "/value25_imem.mem";
 `endif
 `ifdef SIM_ROTATING_LEDS
-			mem_name = "/rotating_leds_sim_imem.mem";
+			mem_name = "/rotating_leds_imem.mem";
 `endif
 `ifdef SIM_DB_ROTATING_LEDS
-			mem_name = "/db_rotating_leds_sim_imem.mem";
+			mem_name = "/db_rotating_leds_imem.mem";
 `endif
-`ifdef SIM_RANDOM_INS
-			mem_name = "/random_ins.mem";
-`endif
+			
 			mem_name = {mem_base_dir, mem_name};
-
 			$readmemh(mem_name, u_top.imem.RAM);
 			$display("imem loaded successfully!");
 		end
@@ -90,6 +82,7 @@ module top_tb;
 
 `ifdef SIM_VALUE25
 	always @(posedge clk) begin
+`ifndef USE_PIPELINE
 		if (u_top.PC == 'h4c) begin
 			// When PC == 76, the next data & address to write should be 25 & 100
 			if (u_top.DataAdr == 100 && u_top.WriteData == 25)
@@ -99,6 +92,7 @@ module top_tb;
 				$display("Simlulation failed: DataAdr=0x%02x, WriteData=0x%02x",
 					u_top.DataAdr, u_top.WriteData);
 		end
+`endif /* USE_PIPELINE */
 	end
 `endif /* SIM_VALUE25 */
 

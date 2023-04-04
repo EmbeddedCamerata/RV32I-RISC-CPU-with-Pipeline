@@ -3,7 +3,7 @@
 # 2. Using an example with pipeline: -s SIM_ROTATING_LEDS -p
 
 TEST_BASE="./test"
-CMD="${TEST_BASE}/cmd.mk"
+CMD="${TEST_BASE}/cmd.cf"
 TB="${TEST_BASE}/top_tb.sv"
 SIM_EXAMPLE="SIM_RANDOM_INS"
 PIPELINE=0
@@ -11,14 +11,12 @@ PIPELINE=0
 while [ -n "$1" ]; do
     case "$1" in
 		# Simulation flag for Iverilog compilation. Options as below:
-		# SIM_RANDOM_INS 		to launch a simple random instructions simulation
 		# SIM_VALUE25 			to launch Value25 simulation
 		# SIM_ROTATING_LEDS 	to launch rotating leds simulation
 		# SIM_DB_ROTATING_LEDS 	to launch double-side rotating leds simulation
 		# Usage: -s SIM_RANDOM_INS
         -s) param="$2"
-			if [ $param != "SIM_RANDOM_INS" \
-				-a $param != "SIM_VALUE25" \
+			if [ $param != "SIM_VALUE25" \
 				-a $param != "SIM_ROTATING_LEDS" \
 				-a $param != "SIM_DB_ROTATING_LEDS" ]; then
 				echo "Simulation $param is not implemented."
@@ -31,7 +29,7 @@ while [ -n "$1" ]; do
 		# Usage: -p
         -p) echo "Pipeline implementation enabled"
 			PIPELINE=1
-			CMD="${TEST_BASE}/cmd_pipeline.mk";;
+			CMD="${TEST_BASE}/cmd_pipeline.cf";;
         --) shift
             break;;
         *) echo "$1 is not an option";;
@@ -50,7 +48,7 @@ echo "Using ${SIM_EXAMPLE} example"
 
 if [ ${PIPELINE} -eq 1 ]; then
 	OUTPUT="${TEST_BASE}/pipeline/${SIM_EXAMPLE}.vvp"
-	iverilog -g2012 -o ${OUTPUT} ${TB} -s top_tb -c ${CMD} -DSIM_ON_IVERILOG -D${SIM_EXAMPLE} -DUSE_PIPELINE -Wall
+	iverilog -g2012 -o ${OUTPUT} ${TB} -s top_tb -c ${CMD} -DSIM_ON_IVERILOG -D${SIM_EXAMPLE} -DUSE_PIPELINE -y./rtl/core/pipeline -Wall
 else
 	OUTPUT="${TEST_BASE}/simple/${SIM_EXAMPLE}.vvp"
 	iverilog -g2012 -o ${OUTPUT} ${TB} -s top_tb -c ${CMD} -DSIM_ON_IVERILOG -D${SIM_EXAMPLE} -Wall

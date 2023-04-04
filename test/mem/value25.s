@@ -1,8 +1,8 @@
-@ 1. Test the RISC-V processor.  
-@ add, sub, and, or, slt, addi, lw, sw, beq, jal
-@ If successful, it should write the value 25 to address 100
+# 1. Test the RISC-V processor.  
+# add, sub, and, or, slt, addi, lw, sw, beq, jal
+# If successful, it should write the value 25 to address 100
 
-@       RISC-V Assembly         Description               Address   Machine Code
+#       RISC-V Assembly         Description               Address   Machine Code
 main:   addi x2, x0, 5          # x2 = 5                  00		0x00500113	# 0000000_00101_00000_000_00010_0010011
 		addi x3, x0, 12         # x3 = 12                 04		0x00C00193	# 0000000_01100_00000_000_00011_0010011
 		addi x7, x3, -9         # x7 = (12 - 9) = 3       08		0xFF718393	# 1111111_10111_00011_000_00111_0010011
