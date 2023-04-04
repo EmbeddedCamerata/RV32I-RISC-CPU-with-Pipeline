@@ -8,22 +8,30 @@ module alu(
 	output wire			zero
 );
 
-	wire [31:0] subtract = a - b;
+	wire [31:0] condinvb, sum;
+	wire v;						// overflow
+	wire isAddSub;				// true when is add or subtract operation
+
+	assign condinvb = alucontrol[0] ? ~b : b;
+	assign sum = a + condinvb + alucontrol[0];
+	assign isAddSub = ~alucontrol[2] & ~alucontrol[1] |
+					~alucontrol[1] & alucontrol[0];
 
 	always @(*) begin
 		case (alucontrol)
-			`ALU_CTRL_ADD:	result = a + b;					// ADD/ADDI
-			`ALU_CTRL_SUB:	result = subtract;				// SUB/SUBI
+			`ALU_CTRL_ADD:	result = sum;					// ADD/ADDI
+			`ALU_CTRL_SUB:	result = sum;					// SUB/SUBI
 			`ALU_CTRL_AND:	result = a & b;					// AND/ANDI
 			`ALU_CTRL_OR:	result = a | b;					// OR/ORI
 			`ALU_CTRL_XOR:	result = a ^ b;					// XOR/XORI
-			`ALU_CTRL_SLT:	result = {31'b0, subtract[31]};	// SLT/SLTI
+			`ALU_CTRL_SLT:	result = sum[31] ^ v;			// SLT/SLTI
 			`ALU_CTRL_SLL:	result = a << b[4:0];			// SLL/SLLI
 			`ALU_CTRL_SRL:	result = a >> b[4:0];			// SRL/SRLI
-			default:		result = 32'b0;
+			default:		result = 32'bx;
 		endcase
 	end
 
 	assign zero = (result == 32'b0);
+	assign v = ~(alucontrol[0] ^ a[31] ^ b[31]) & (a[31] ^ sum[31]) & isAddSub;
 
 endmodule

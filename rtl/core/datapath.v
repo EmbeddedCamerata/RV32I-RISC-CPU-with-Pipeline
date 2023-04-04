@@ -88,7 +88,7 @@ endmodule
 module datapath(
 	input				clk,
 	input				reset,
-	input		[1:0]	ResultSrcE0,
+	input				ResultSrcE0,
 	input				PCSrcE,
 	input				ALUSrcE,
 	input				RegWriteM,
@@ -100,7 +100,7 @@ module datapath(
 	input		[31:0]	ReadDataM,
 	output				ZeroE,
 	output				FlushE,
-	output reg	[31:0]	PCF,
+	output wire	[31:0]	PCF,
 	output wire [31:0]	InstrD,
 	output wire [31:0]	ALUResultM,
 	output wire [31:0]	WriteDataM,
@@ -136,11 +136,11 @@ module datapath(
 		.stallF		(StallF		),
 		.stallD		(StallD		),
 		.flushD		(FlushD		),
-		.FlushE		(FlushE		)
+		.flushE		(FlushE		)
 	);
 
 	// Next PC logic
-	mux2 #(32) pcbrmux(.d0 (PCPlus4F), .d1(PCTargetE), .s(PCSrcE), .y(PCNext));
+	mux2 #(32) pcbrmux(.d0(PCPlus4F), .d1(PCTargetE), .s(PCSrcE), .y(PCNext));
 
 	// Fetch stage logic
 	flopenr #(32) pcreg(.clk(clk), .reset(reset), .en(~StallF), .d(PCNext), .q(PCF));
@@ -183,12 +183,12 @@ module datapath(
 	// Execute stage
 	floprc #(32) rdata1E(.clk(clk), .reset(reset), .clear(FlushE), .d(RD1D), .q(RD1E));
 	floprc #(32) rdata2E(.clk(clk), .reset(reset), .clear(FlushE), .d(RD2D), .q(RD2E));
-	floprc #(32) immE(clk, reset, FlushE, ImmExtD, ImmExtE);
-	floprc #(32) pcplus4E(clk, reset, FlushE, PCPlus4D, PCPlus4E);
-	floprc #(32) pcE(clk, reset, FlushE, PCD, PCE);
-	floprc #(5)  rs11E(clk, reset, FlushE, rs1D, rs1E);
-	floprc #(5)  rs22E(clk, reset, FlushE, rs2D, rs2E);
-	floprc #(5)  rddE(clk, reset, FlushE, rdD, rdE);
+	floprc #(32) immE(.clk(clk), .reset(reset), .clear(FlushE), .d(ImmExtD), .q(ImmExtE));
+	floprc #(32) pcplus4E(.clk(clk), .reset(reset), .clear(FlushE), .d(PCPlus4D), .q(PCPlus4E));
+	floprc #(32) pcE(.clk(clk), .reset(reset), .clear(FlushE), .d(PCD), .q(PCE));
+	floprc #(5)  rs11E(.clk(clk), .reset(reset), .clear(FlushE), .d(rs1D), .q(rs1E));
+	floprc #(5)  rs22E(.clk(clk), .reset(reset), .clear(FlushE), .d(rs2D), .q(rs2E));
+	floprc #(5)  rddE(.clk(clk), .reset(reset), .clear(FlushE), .d(rdD), .q(rdE));
 	mux3 #(32) forwardaemux(.d0(RD1E), .d1(ResultW), .d2(ALUResultM), .s(forwardaE), .y(SrcAE));
 	mux3 #(32) forwardbemux(.d0(RD2E), .d1(ResultW), .d2(ALUResultM), .s(forwardbE), .y(WriteDataE));
 	mux2 #(32) srcbmux(.d0(WriteDataE), .d1(ImmExtE), .s(ALUSrcE), .y(SrcBE));

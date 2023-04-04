@@ -1,3 +1,5 @@
+`include "config.vh"
+
 module regfile(
 	input				clk,
 	input				we3,
@@ -13,20 +15,27 @@ module regfile(
 	output wire [31:0]	sim_t6
 );
 
-	reg [31:0] rf[31:0];	
+	reg [31:0] rf[31:0];
 	// Three ported register file
 	// Read two ports combinationally (A1/RD1, A2/RD2)
 	// Write third port on rising edge of clock (A3/WD3/WE3)
-	// Register #0 is hard-wired connected to GND	
-	
+	// Register #0 is hard-wired connected to GND
+
+`ifndef USE_PIPELINE
 	always @(posedge clk) begin
 		if (we3)
 			rf[a3] <= wd3;
-	end	
-	
+	end
+`else
+	always @(negedge clk) begin
+		if (we3)
+			rf[a3] <= wd3;
+	end
+`endif
+
 	assign rd1 = (a1 != 0) ? rf[a1] : 0;
-	assign rd2 = (a2 != 0) ? rf[a2] : 0;	
-	
+	assign rd2 = (a2 != 0) ? rf[a2] : 0;
+
 	// Used for simulation
 	assign sim_t3 = rf[28];
 	assign sim_t4 = rf[29];

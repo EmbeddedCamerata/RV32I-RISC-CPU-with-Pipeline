@@ -53,7 +53,7 @@ module controller(
 	input				funct7b5,
 	input				ZeroE,
 	input				FlushE,
-	output wire [1:0]	ResultSrcE0,
+	output wire			ResultSrcE0,
 	output wire			PCSrcE,
 	output wire			ALUSrcE,
 	output wire [2:0]	ALUControlE,
