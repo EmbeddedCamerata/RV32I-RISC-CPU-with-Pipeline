@@ -21,7 +21,7 @@ module regfile(
 	// Write third port on rising edge of clock (A3/WD3/WE3)
 	// Register #0 is hard-wired connected to GND
 
-`ifndef USE_PIPELINE
+`ifndef ENABLE_PIPELINE
 	always @(posedge clk) begin
 		if (we3)
 			rf[a3] <= wd3;

@@ -50,6 +50,7 @@
 //   Instr[31:12] = imm[20], imm[10:1], imm[11], imm[19:12]
 //   Instr[11:7]  = rd
 //   Instr[6:0]   = opcode
+`include "defines.vh"
 `include "config.vh"
 
 module aludec(
@@ -57,6 +58,10 @@ module aludec(
 	input		[2:0]	funct3,
 	input				funct7b5,
 	input		[1:0]	ALUOp,
+`ifdef ENABLE_MUL_DIV_SUPPORT
+	input				funct7b0,
+	output wire	[1:0]	alu_m,
+`endif
 	output reg	[2:0]	ALUControl
 );
 
@@ -86,10 +91,18 @@ module aludec(
 	wire RtypeSub;
 	assign RtypeSub = funct7b5 & opb5;  // TRUE for R-type subtract instruction
 
+`ifdef ENABLE_MUL_DIV_SUPPORT	
+	wire RtypeMul, RtypeDiv;
+	assign RtypeMul = funct7b0 & opb5 & (!funct3[2]);
+	assign RtypeDiv = funct7b0 & opb5 & (funct3[2]);
+	assign alu_m[1] = RtypeMul | RtypeDiv;
+	assign alu_m[0] = RtypeDiv;
+`endif
+
 	always @(*) begin
 		case (ALUOp)
-			2'b00: ALUControl = `ALU_CTRL_ADD; // ADD
-			2'b01: ALUControl = `ALU_CTRL_SUB; // SUB
+			2'b00: ALUControl = `ALU_CTRL_ADD;			// ADD
+			2'b01: ALUControl = `ALU_CTRL_SUB;			// SUB
 			2'b10: begin
 				case (funct3)
 					3'b000: begin

@@ -20,7 +20,7 @@ module top(
 	wire [31:0] sim_t3, sim_t4, sim_t5, sim_t6;
 
 	// instantiate processor and memories
-`ifndef USE_PIPELINE
+`ifndef ENABLE_PIPELINE
 	core_top rvsingle(
 		.clk		(clk		),
 		.reset		(reset		),

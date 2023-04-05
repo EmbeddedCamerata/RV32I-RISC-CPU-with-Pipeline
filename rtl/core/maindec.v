@@ -1,4 +1,4 @@
-`include "config.vh"
+`include "defines.vh"
 
 module maindec(
 	input		[6:0]	op,

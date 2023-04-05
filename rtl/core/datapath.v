@@ -1,6 +1,6 @@
 `include "config.vh"
 
-`ifndef USE_PIPELINE
+`ifndef ENABLE_PIPELINE
 module datapath(
 	input				clk,
 	input				reset,
@@ -100,6 +100,9 @@ module datapath(
 	input		[31:0]	ReadDataM,
 	output				ZeroE,
 	output				FlushE,
+`ifdef ENABLE_MUL_DIV_SUPPORT
+	output wire			div_stall,
+`endif
 	output wire	[31:0]	PCF,
 	output wire [31:0]	InstrD,
 	output wire [31:0]	ALUResultM,
@@ -118,6 +121,16 @@ module datapath(
 	wire [31:0] RD1D, RD2D, RD1E, RD2E, SrcAE, SrcBE;
 	wire [31:0] ALUResultE, ALUResultW, WriteDataE, ReadDataW, ResultW;
 
+`ifdef ENABLE_MUL_DIV_SUPPORT
+	wire DIV_flushE, DIV_busyE, DIV_validE, div_stallE;
+	wire RtypedivE, div_i_startE;
+
+	assign div_stall = div_stallE;
+	assign RtypedivE = ALUME[0];
+	assign div_i_startE = RtypedivE & ALUME[0];
+
+`endif
+
 	// Hazard detection
 	hazard h(
 		.rs1D		(rs1D		),
@@ -131,6 +144,11 @@ module datapath(
 		.RegWriteW	(RegWriteW	),
 		.ResultSrcE0(ResultSrcE0),
 		.PCSrcE		(PCSrcE		),
+`ifdef ENABLE_MUL_DIV_SUPPORT
+		.RtypedivE	(RtypedivE	),
+		.DIV_validE	(DIV_validE	),
+		.div_stallE	(div_stallE	),
+`endif
 		.forwardaE	(forwardaE	),
 		.forwardbE	(forwardbE	),
 		.stallF		(StallF		),
@@ -143,16 +161,43 @@ module datapath(
 	mux2 #(32) pcbrmux(.d0(PCPlus4F), .d1(PCTargetE), .s(PCSrcE), .y(PCNext));
 
 	// Fetch stage logic
-	flopenr #(32) pcreg(.clk(clk), .reset(reset), .en(~StallF), .d(PCNext), .q(PCF));
+	flopenr #(32) pcreg(.clk(clk), .reset(reset), .en(
+`ifdef ENABLE_MUL_DIV_SUPPORT
+			~(StallD | div_stallE)
+`else
+			~StallF // TODO check this format
+`endif
+		), .d(PCNext), .q(PCF));
+
 	adder pcadd4(.a(PCF), .b(32'd4), .y(PCPlus4F));
 
 	// Decode stage
-	flopenrc #(32) pcd(.clk(clk), .reset(reset), .en(~StallD), .clear(FlushD), .d(PCF), .q(PCD));
-	flopenrc #(32) PC4D(.clk(clk), .reset(reset), .en(~StallD), .clear(FlushD), .d(PCPlus4F), .q(PCPlus4D));
+	flopenrc #(32) pcd(.clk(clk), .reset(reset),
+`ifdef ENABLE_MUL_DIV_SUPPORT
+		.en(~(StallD | div_stallE)),
+`else
+		.en(~StallD),
+`endif
+		.clear(FlushD), .d(PCF), .q(PCD));
+
+	flopenrc #(32) PC4D(.clk(clk), .reset(reset),
+`ifdef ENABLE_MUL_DIV_SUPPORT
+		.en(~(StallD | div_stallE)),
+`else
+		.en(~StallD),
+`endif
+		.clear(FlushD), .d(PCPlus4F), .q(PCPlus4D));
+
 	flopenrc #(
 		.WIDTH	(32			),
 		.VALUE_0(32'b0010011)
-	) INSTD(.clk(clk), .reset(reset), .en(~StallD), .clear(FlushD), .d(InstrF), .q(InstrD));
+	) INSTD(.clk(clk), .reset(reset),
+`ifdef ENABLE_MUL_DIV_SUPPORT
+		.en(~(StallD | div_stallE)),
+`else
+		.en(~StallD),
+`endif
+		.clear(FlushD), .d(InstrF), .q(InstrD));
 
 	assign rs1D = InstrD[19:15];
 	assign rs2D = InstrD[24:20];
@@ -181,23 +226,45 @@ module datapath(
 	);
 
 	// Execute stage
-	floprc #(32) rdata1E(.clk(clk), .reset(reset), .clear(FlushE), .d(RD1D), .q(RD1E));
-	floprc #(32) rdata2E(.clk(clk), .reset(reset), .clear(FlushE), .d(RD2D), .q(RD2E));
-	floprc #(32) immE(.clk(clk), .reset(reset), .clear(FlushE), .d(ImmExtD), .q(ImmExtE));
-	floprc #(32) pcplus4E(.clk(clk), .reset(reset), .clear(FlushE), .d(PCPlus4D), .q(PCPlus4E));
-	floprc #(32) pcE(.clk(clk), .reset(reset), .clear(FlushE), .d(PCD), .q(PCE));
-	floprc #(5)  rs11E(.clk(clk), .reset(reset), .clear(FlushE), .d(rs1D), .q(rs1E));
-	floprc #(5)  rs22E(.clk(clk), .reset(reset), .clear(FlushE), .d(rs2D), .q(rs2E));
-	floprc #(5)  rddE(.clk(clk), .reset(reset), .clear(FlushE), .d(rdD), .q(rdE));
+`ifdef ENABLE_MUL_DIV_SUPPORT
+	flopenrc #(32) rdata1E	(.clk(clk), .reset(reset), .en(~div_stallE), .clear(FlushE), .d(RD1D),		.q(RD1E));
+	flopenrc #(32) rdata2E	(.clk(clk), .reset(reset), .en(~div_stallE), .clear(FlushE), .d(RD2D),		.q(RD2E));
+	flopenrc #(32) immE		(.clk(clk), .reset(reset), .en(~div_stallE), .clear(FlushE), .d(ImmExtD),	.q(ImmExtE));
+	flopenrc #(32) pcplus4E (.clk(clk), .reset(reset), .en(~div_stallE), .clear(FlushE), .d(PCPlus4D),	.q(PCPlus4E));
+	flopenrc #(32) pcE		(.clk(clk), .reset(reset), .en(~div_stallE), .clear(FlushE), .d(PCD),		.q(PCE));
+	flopenrc #(5)  rs11E	(.clk(clk), .reset(reset), .en(~div_stallE), .clear(FlushE), .d(rs1D),		.q(rs1E));
+	flopenrc #(5)  rs22E	(.clk(clk), .reset(reset), .en(~div_stallE), .clear(FlushE), .d(rs2D),		.q(rs2E));
+	flopenrc #(5)  rddE		(.clk(clk), .reset(reset), .en(~div_stallE), .clear(FlushE), .d(rdD),		.q(rdE));
+`else
+	floprc #(32) rdata1E	(.clk(clk), .reset(reset), .clear(FlushE), .d(RD1D),	.q(RD1E));
+	floprc #(32) rdata2E	(.clk(clk), .reset(reset), .clear(FlushE), .d(RD2D),	.q(RD2E));
+	floprc #(32) immE		(.clk(clk), .reset(reset), .clear(FlushE), .d(ImmExtD),	.q(ImmExtE));
+	floprc #(32) pcplus4E	(.clk(clk), .reset(reset), .clear(FlushE), .d(PCPlus4D),.q(PCPlus4E));
+	floprc #(32) pcE		(.clk(clk), .reset(reset), .clear(FlushE), .d(PCD),		.q(PCE));
+	floprc #(5)  rs11E		(.clk(clk), .reset(reset), .clear(FlushE), .d(rs1D),	.q(rs1E));
+	floprc #(5)  rs22E		(.clk(clk), .reset(reset), .clear(FlushE), .d(rs2D),	.q(rs2E));
+	floprc #(5)  rddE		(.clk(clk), .reset(reset), .clear(FlushE), .d(rdD),		.q(rdE));
+`endif
+
 	mux3 #(32) forwardaemux(.d0(RD1E), .d1(ResultW), .d2(ALUResultM), .s(forwardaE), .y(SrcAE));
 	mux3 #(32) forwardbemux(.d0(RD2E), .d1(ResultW), .d2(ALUResultM), .s(forwardbE), .y(WriteDataE));
 	mux2 #(32) srcbmux(.d0(WriteDataE), .d1(ImmExtE), .s(ALUSrcE), .y(SrcBE));
 
 	// ALU logic
 	alu alu(
+`ifdef ENABLE_MUL_DIV_SUPPORT
+		.clk		(clk		),
+		.reset		(reset		),
+`endif
 		.a			(SrcAE		),
 		.b			(SrcBE		),
 		.alucontrol (ALUControlE),
+`ifdef ENABLE_MUL_DIV_SUPPORT
+		.alu_m		(ALUME 		),
+		.i_div_flush(FlushE 	),
+		.o_div_busy (DIV_busyE 	),
+		.o_div_valid(DIV_validE ),
+`endif
 		.result		(ALUResultE	),
 		.zero		(ZeroE		)
 	);
@@ -205,16 +272,30 @@ module datapath(
 	adder pcaddJAL(.a(PCE), .b(ImmExtE), .y(PCTargetE));
 
 	// Memory stage
-	flopr #(32) r1M(.clk(clk), .reset(reset), .d(WriteDataE), .q(WriteDataM));
-	flopr #(32) r2M(.clk(clk), .reset(reset), .d(ALUResultE), .q(ALUResultM));
-	flopr #(32) pcplus4M(.clk(clk), .reset(reset), .d(PCPlus4E), .q(PCPlus4M));
-	flopr #(5) rdm(.clk(clk), .reset(reset), .d(rdE), .q(rdM));
+`ifdef ENABLE_MUL_DIV_SUPPORT
+	flopenr #(32) r1M		(.clk(clk), .reset(reset), .en(~div_stallE), .d(WriteDataE),.q(WriteDataM));
+	flopenr #(32) r2M		(.clk(clk), .reset(reset), .en(~div_stallE), .d(ALUResultE),.q(ALUResultM));
+	flopenr #(32) pcplus4M	(.clk(clk), .reset(reset), .en(~div_stallE), .d(PCPlus4E),	.q(PCPlus4M));
+	flopenr #(5)  rdm		(.clk(clk), .reset(reset), .en(~div_stallE), .d(rdE),		.q(rdM));
 
 	// Writeback stage
-	flopr #(32) aluM(.clk(clk), .reset(reset), .d(ALUResultM), .q(ALUResultW));
-	flopr #(32) pcplus4w(.clk(clk), .reset(reset), .d(PCPlus4M), .q(PCPlus4W));
-	flopr #(32) resultW(.clk(clk), .reset(reset), .d(ReadDataM), .q(ReadDataW));
-	flopr #(5) rdw(.clk(clk), .reset(reset), .d(rdM), .q(rdW));
+	flopenr #(32) aluM		(.clk(clk), .reset(reset), .en(~div_stallE), .d(ALUResultM),.q(ALUResultW));
+	flopenr #(32) pcplus4w	(.clk(clk), .reset(reset), .en(~div_stallE), .d(PCPlus4M),	.q(PCPlus4W));
+	flopenr #(32) resultW	(.clk(clk), .reset(reset), .en(~div_stallE), .d(ReadDataM),	.q(ReadDataW));
+	flopenr #(5)  rdw		(.clk(clk), .reset(reset), .en(~div_stallE), .d(rdM),		.q(rdW));
+`else
+	flopr #(32) r1M		(.clk(clk), .reset(reset), .d(WriteDataE),	.q(WriteDataM));
+	flopr #(32) r2M		(.clk(clk), .reset(reset), .d(ALUResultE),	.q(ALUResultM));
+	flopr #(32) pcplus4M(.clk(clk), .reset(reset), .d(PCPlus4E),	.q(PCPlus4M));
+	flopr #(5)  rdm		(.clk(clk), .reset(reset), .d(rdE),			.q(rdM));
+
+	// Writeback stage
+	flopr #(32) aluM	(.clk(clk), .reset(reset), .d(ALUResultM),	.q(ALUResultW));
+	flopr #(32) pcplus4w(.clk(clk), .reset(reset), .d(PCPlus4M),	.q(PCPlus4W));
+	flopr #(32) resultW (.clk(clk), .reset(reset), .d(ReadDataM),	.q(ReadDataW));
+	flopr #(5)  rdw		(.clk(clk), .reset(reset), .d(rdM),			.q(rdW));
+`endif
+
 	mux3 #(32) resultmux(.d0(ALUResultW), .d1(ReadDataW), .d2(PCPlus4W), .s(ResultSrcW), .y(ResultW));
 
 endmodule

@@ -1,6 +1,6 @@
 `include "config.vh"
 
-`ifndef USE_PIPELINE
+`ifndef ENABLE_PIPELINE
 module core_top(
 	input				clk,
 	input				reset,
@@ -74,11 +74,14 @@ module core_top(
 	output wire [31:0]	sim_t5,
 	output wire [31:0]	sim_t6
 );
-	wire ZeroE;
-	wire FlushE;
-	wire ALUSrcE;
+	wire ZeroE, FlushE, ALUSrcE, PCSrcE;
+
+`ifdef ENABLE_MUL_DIV_SUPPORT
+	wire div_stallE;
+	wire [1:0] ALUME;
+`endif
+
 	wire ResultSrcE0;
-	wire PCSrcE;
 	wire RegWriteM;
 	wire RegWriteW;
 	wire [1:0] ImmSrcD;
@@ -97,6 +100,11 @@ module core_top(
 		.funct7b5	(InstrD[30]		),
 		.ZeroE		(ZeroE			),
 		.FlushE		(FlushE			),
+`ifdef ENABLE_MUL_DIV_SUPPORT
+		.funct7b0	(InstrD[25]		),
+		.div_stallE	(div_stallE		),
+		.ALUME		(ALUME			),
+`endif
 		.ResultSrcE0(ResultSrcE0	),
 		.PCSrcE		(PCSrcE			),
 		.ALUSrcE	(ALUSrcE		),
@@ -123,6 +131,9 @@ module core_top(
 		.ReadDataM	(ReadDataM	),
 		.ZeroE		(ZeroE		),
 		.FlushE		(FlushE		),
+`ifdef ENABLE_MUL_DIV_SUPPORT
+		.div_stall	(div_stallE	),
+`endif
 		.PCF		(PCF		),
 		.InstrD		(InstrD		),
 		.ALUResultM (ALUResultM ),

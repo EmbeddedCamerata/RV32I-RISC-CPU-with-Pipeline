@@ -1,3 +1,5 @@
+`include "config.vh"
+
 module hazard(
 	input		[4:0]	rs1D,
 	input		[4:0]	rs2D,
@@ -10,6 +12,11 @@ module hazard(
 	input				RegWriteW,
 	input				ResultSrcE0,
 	input				PCSrcE,
+`ifdef ENABLE_MUL_DIV_SUPPORT
+	input				RtypedivE,
+	input				DIV_validE,
+	output wire 		div_stallE,
+`endif
 	output reg	[1:0]	forwardaE,
 	output reg	[1:0]	forwardbE,
 	output wire			stallF,
@@ -48,6 +55,9 @@ module hazard(
 	
 	assign #1 stallD = lwstall;
 	assign #1 stallF = stallD;
+
+	// Div stall
+	assign #1 div_stallE = RtypedivE & !DIV_validE;
 
 	// contorl hazard flush
 	assign #1 flushD = PCSrcE;
